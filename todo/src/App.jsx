@@ -6,6 +6,13 @@ function App() {
   let [todos, setTodos] = useState(['walk', 'talk' , 'hop'])
   let [currentTodo, setCurrentTodo] = useState('')
 
+
+  let handlekey = (e) =>{
+    if(e.key === 'Enter') {
+      add()
+    }
+  }
+
   let handleinput = (e) =>{
     setCurrentTodo(e.target.value)
   }
@@ -37,8 +44,8 @@ function App() {
     if(i < todos.length ){
       let newarry = [...todos]
       let currentValue = newarry[i]
-      let nextvalue = newarry[i+1]
-      newarry[i] = nextvalue
+      let pastvalue = newarry[i+1]
+      newarry[i] = pastvalue
       newarry[i+1] = currentValue
       setTodos(newarry)
       }
@@ -46,13 +53,16 @@ function App() {
   }
   return (
     <>
-    <div className='flex'>
-    <input type="text" value={currentTodo} onChange={handleinput} placeholder='eneter a task' />
+    <div >
+      <h1 className='text-lg'>
+        hello
+      </h1>
+    <input type="text" value={currentTodo} onChange={handleinput} placeholder='eneter a task' autoFocus onKeyDown={handlekey} />
     <button onClick={add}>
       Add
     </button>
     </div>
-<div className='flex'>
+<div>
     <ol>
       {todos.map((task, i) =>{
         
