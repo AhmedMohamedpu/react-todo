@@ -1,9 +1,20 @@
 import { useState } from "react";
 import "./App.css";
+import { IoEllipsisHorizontalCircle } from "react-icons/io5";
+import { FaEllipsisH } from "react-icons/fa";
 
 function App() {
   let [todos, setTodos] = useState(["walk", "talk", "hop", "live"]);
   let [currentTodo, setCurrentTodo] = useState("");
+  let [setting, setsetting] = useState(false);
+
+  let toggleSetting = () => {
+    if (setting === true) {
+      setsetting(false);
+    } else if (setting === false) {
+      setsetting(true);
+    }
+  };
 
   let handlekey = (e) => {
     if (e.key === "Enter") {
@@ -51,11 +62,11 @@ function App() {
     <>
       <div className="flex justify-center">
         <div className="bg-white p-5 mt-5 max-w-xs max-h-200 break-words overflow-auto rounded-md sm:max-w-sm md:max-w-md lg:max-w-md xl:max-w-screen-xs 2xl:max-w-2xl">
-          <div className="flex gap-3">
+          <div className="flex gap-3 justify-center">
             <input
               type="text"
               placeholder="enter task"
-              className="border border-gray-500 p-2  hover:border-gray-400 focus:border-purple-600"
+              className="border border-gray-500 p-2  hover:border-gray-400 "
               onChange={handleinput}
               onKeyDown={handlekey}
               value={currentTodo}
@@ -80,7 +91,14 @@ function App() {
                       </div>
                       <div className="flex gap-2">
                         <div className="h-full border border-red-700"></div>
-                        <button>ellipse</button>
+                        <div>
+                          <button className="relative" onClick={toggleSetting}>
+                            <FaEllipsisH />
+                          </button>
+                          <div style={setting ? {} : { display: "none" }}>
+                            hello
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </li>
