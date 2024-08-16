@@ -1,7 +1,12 @@
 import { useState } from "react";
 import "./App.css";
 import { IoEllipsisHorizontalCircle } from "react-icons/io5";
-import { FaEllipsisH } from "react-icons/fa";
+import { FaEllipsisV } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+import { LuMoveUp } from "react-icons/lu";
+import { LuMoveDown } from "react-icons/lu";
+import { FaRegEdit } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 
 function App() {
   let [todos, setTodos] = useState(["walk", "talk", "hop", "live"]);
@@ -61,7 +66,7 @@ function App() {
   return (
     <>
       <div className="flex justify-center">
-        <div className="bg-white p-5 mt-5 max-w-xs max-h-200 break-words overflow-auto rounded-md sm:max-w-sm md:max-w-md lg:max-w-md xl:max-w-screen-xs 2xl:max-w-2xl">
+        <div className="bg-white p-5 mt-5 max-w-xs max-h-200 break-words overflow-auto rounded-md sm:max-w-sm md:max-w-md lg:max-w-md xl:max-w-screen-xs 2xl:max-w-2xl flex flex-col gap-y-5">
           <div className="flex gap-3 justify-center">
             <input
               type="text"
@@ -78,6 +83,11 @@ function App() {
             >
               Add
             </button>
+            <div className="flex justify-center ">
+              <button onClick={toggleSetting} className="text-lg">
+                <FaEllipsisV />
+              </button>
+            </div>
           </div>
 
           <div>
@@ -90,14 +100,40 @@ function App() {
                         <p className="break-all">{task}</p>
                       </div>
                       <div className="flex gap-2">
-                        <div className="h-full border border-red-700"></div>
-                        <div>
-                          <button className="relative" onClick={toggleSetting}>
-                            <FaEllipsisH />
+                        <div
+                          className={`h-full border ${
+                            setting ? "border-red-700" : "hidden"
+                          }`}
+                        ></div>
+                        <div
+                          style={setting ? {} : { display: "none" }}
+                          className="flex gap-1 text-lg"
+                        >
+                          <button
+                            disabled={i === 0}
+                            onClick={() => {
+                              moveup(i);
+                            }}
+                          >
+                            <LuMoveUp />
                           </button>
-                          <div style={setting ? {} : { display: "none" }}>
-                            hello
-                          </div>
+                          <button
+                            onClick={() => {
+                              movedown(i);
+                            }}
+                          >
+                            <LuMoveDown />
+                          </button>
+                          <button>
+                            <FaRegEdit />
+                          </button>
+                          <button
+                            onClick={() => {
+                              remove(i);
+                            }}
+                          >
+                            <MdDeleteOutline />
+                          </button>
                         </div>
                       </div>
                     </div>
