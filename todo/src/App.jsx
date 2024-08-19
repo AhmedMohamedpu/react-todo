@@ -15,7 +15,6 @@ function App() {
   let [currentTodo, setCurrentTodo] = useState("");
   let [setting, setsetting] = useState(false);
   let [editIndex, setEditIndex] = useState(-1);
-  let [doneEditIndex, setDoneEditIndex] = useState(-1);
   let [newTask, setNewTask] = useState("");
 
   let [doneTodos, setDoneTodos] = useState([
@@ -30,6 +29,7 @@ function App() {
     setTodos(newarry);
     setNewTask("");
     setEditIndex(-1);
+    setsetting(false);
   };
 
   let handleNewInp = (e) => {
@@ -70,6 +70,7 @@ function App() {
       setTodos((t) => [...t, currentTodo]);
       setCurrentTodo("");
     }
+    setsetting(false);
   };
   let remove = (index) => {
     let newtodos = todos.filter((elem, i) => i !== index);
@@ -106,7 +107,9 @@ function App() {
   };
 
   let undoFinishTodo = (i) => {
+    let value = doneTodos[i];
     let newDonetodos = doneTodos.filter((elem, index) => index !== i);
+    setTodos((t) => [...t, value]); // Add the doneTodo back to the todos list
     setDoneTodos(newDonetodos);
   };
   return (
@@ -141,7 +144,7 @@ function App() {
               {todos.map((task, i) => {
                 return (
                   <li key={i} className="flex gap-2">
-                    <div className="bg-red-400 p-2 w-full">
+                    <div className="bg-red-400 rounded-sm p-2 w-full">
                       <div className="flex justify-between gap-5">
                         <div className="text-wrap break-words max-w-full">
                           {editIndex === i && setting ? (
@@ -256,10 +259,15 @@ function App() {
               <ol className="flex flex-col gap-y-5">
                 {doneTodos.map((task, i) => (
                   <li key={i} className="flex gap-2">
-                    <div className="w-full bg-green-400 p-2">
-                      <p>{task}</p>
+                    <div className="w-full bg-green-400 p-2 rounded-sm">
+                      <p className="break-words">{task}</p>
                     </div>
-                    <button className="flex-shrink-0" onClick={undoFinishTodo}>
+                    <button
+                      className="flex-shrink-0"
+                      onClick={() => {
+                        undoFinishTodo(i);
+                      }}
+                    >
                       <FaTimes />
                     </button>
                   </li>
