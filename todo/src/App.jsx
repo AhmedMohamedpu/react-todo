@@ -1,17 +1,50 @@
 import { useState } from "react";
 import "./App.css";
-import { IoEllipsisHorizontalCircle } from "react-icons/io5";
 import { FaEllipsisV } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
 import { LuMoveUp } from "react-icons/lu";
 import { LuMoveDown } from "react-icons/lu";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
+import { IoMdCheckmark } from "react-icons/io";
+import { HiOutlineXMark } from "react-icons/hi2";
+import { FaCheck } from "react-icons/fa6";
+import { FaTimes } from "react-icons/fa";
 
 function App() {
   let [todos, setTodos] = useState(["walk", "talk", "hop", "live"]);
   let [currentTodo, setCurrentTodo] = useState("");
   let [setting, setsetting] = useState(false);
+  let [editIndex, setEditIndex] = useState(-1);
+  let [doneEditIndex, setDoneEditIndex] = useState(-1);
+  let [newTask, setNewTask] = useState("");
+
+  let [doneTodos, setDoneTodos] = useState([
+    "wake up",
+    "go to school",
+    "take out the chicken",
+  ]);
+
+  let handleNewTodo = (index) => {
+    let newarry = [...todos];
+    newarry[index] = newTask;
+    setTodos(newarry);
+    setNewTask("");
+    setEditIndex(-1);
+  };
+
+  let handleNewInp = (e) => {
+    setNewTask(e.target.value);
+  };
+  let handleNewkey = (e, i) => {
+    let trimvalue = newTask.trim();
+    if (e.key === "Enter") {
+      let newarry = [...todos];
+      newarry[i] = trimvalue;
+      setTodos(newarry);
+      setNewTask("");
+      setEditIndex(-1);
+    }
+  };
 
   let toggleSetting = () => {
     if (setting === true) {
@@ -63,6 +96,19 @@ function App() {
       setTodos(newarry);
     }
   };
+
+  let finishTodo = (i) => {
+    let value = todos[i];
+    remove(i);
+    setDoneTodos((t) => {
+      return [...t, value]; // Corrected by adding a return statement
+    });
+  };
+
+  let undoFinishTodo = (i) => {
+    let newDonetodos = doneTodos.filter((elem, index) => index !== i);
+    setDoneTodos(newDonetodos);
+  };
   return (
     <>
       <div className="flex justify-center">
@@ -71,7 +117,7 @@ function App() {
             <input
               type="text"
               placeholder="enter task"
-              className="border border-gray-500 p-2  hover:border-gray-400 "
+              className="border border-gray-500 p-2 rounded-sm  hover:border-gray-400 "
               onChange={handleinput}
               onKeyDown={handlekey}
               value={currentTodo}
@@ -94,53 +140,132 @@ function App() {
             <ol className="flex flex-col gap-y-3">
               {todos.map((task, i) => {
                 return (
-                  <li key={i} className="bg-red-400 p-2">
-                    <div className="flex justify-between gap-5">
-                      <div className="text-wrap break-words max-w-full">
-                        <p className="break-all">{task}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <div
-                          className={`h-full border ${
-                            setting ? "border-red-700" : "hidden"
-                          }`}
-                        ></div>
-                        <div
-                          style={setting ? {} : { display: "none" }}
-                          className="flex gap-1 text-lg"
-                        >
-                          <button
-                            disabled={i === 0}
-                            onClick={() => {
-                              moveup(i);
-                            }}
+                  <li key={i} className="flex gap-2">
+                    <div className="bg-red-400 p-2 w-full">
+                      <div className="flex justify-between gap-5">
+                        <div className="text-wrap break-words max-w-full">
+                          {editIndex === i && setting ? (
+                            <div className="relative">
+                              <input
+                                value={newTask}
+                                onChange={handleNewInp}
+                                type="text"
+                                onKeyDown={(e) => {
+                                  handleNewkey(e, i);
+                                }}
+                                className="max-w-full p-2 w-full h-full pr-16 border rounded"
+                                placeholder={todos[i]}
+                                autoFocus
+                              />
+                              <div className="absolute right-0 top-0 flex h-full">
+                                <button
+                                  // onClick={() => {
+                                  //   // console.log("i", i);
+                                  //   // toggleEdit(i);
+                                  // }}
+                                  type="button"
+                                  className="h-full px-2 text-sm text-black bg-red-700"
+                                  onClick={() => {
+                                    setEditIndex(-1);
+                                  }}
+                                >
+                                  <HiOutlineXMark />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="h-full px-2 text-sm text-black bg-red-300 rounded-r"
+                                  onClick={() => {
+                                    handleNewTodo(i);
+                                  }}
+                                >
+                                  <IoMdCheckmark />
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="break-all max-w-lg">{todos[i]}</p>
+                          )}
+                          <p className="break-all"></p>
+                        </div>
+                        <div className="flex gap-2">
+                          <div
+                            className={`h-full border ${
+                              setting ? "border-red-700" : "hidden"
+                            }`}
+                          ></div>
+                          <div
+                            style={setting ? {} : { display: "none" }}
+                            className="flex gap-1 text-lg"
                           >
-                            <LuMoveUp />
-                          </button>
-                          <button
-                            onClick={() => {
-                              movedown(i);
-                            }}
-                          >
-                            <LuMoveDown />
-                          </button>
-                          <button>
-                            <FaRegEdit />
-                          </button>
-                          <button
-                            onClick={() => {
-                              remove(i);
-                            }}
-                          >
-                            <MdDeleteOutline />
-                          </button>
+                            <button
+                              disabled={i === 0}
+                              onClick={() => {
+                                moveup(i);
+                              }}
+                            >
+                              <LuMoveUp />
+                            </button>
+                            <button
+                              onClick={() => {
+                                movedown(i);
+                              }}
+                            >
+                              <LuMoveDown />
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                setEditIndex(i);
+                                setNewTask(task);
+                              }}
+                            >
+                              {" "}
+                              <FaRegEdit />
+                            </button>
+
+                            <button
+                              onClick={() => {
+                                remove(i);
+                              }}
+                            >
+                              <MdDeleteOutline />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
+                    <button
+                      onClick={() => {
+                        finishTodo(i);
+                      }}
+                    >
+                      <FaCheck />
+                    </button>
                   </li>
                 );
               })}
             </ol>
+          </div>
+
+          <div className="flex flex-col gap-y-5">
+            <div className="w-full bg-green-500 p-2 flex justify-center">
+              <p>done</p>
+            </div>
+
+            <div>
+              <ol className="flex flex-col gap-y-5">
+                {doneTodos.map((task, i) => (
+                  <li key={i} className="flex gap-2">
+                    <div className="w-full bg-green-400 p-2">
+                      <p>{task}</p>
+                    </div>
+                    <button className="flex-shrink-0" onClick={undoFinishTodo}>
+                      <FaTimes />
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </div>
         </div>
       </div>
